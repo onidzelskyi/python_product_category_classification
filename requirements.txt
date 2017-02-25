@@ -1,0 +1,4 @@
+pandas>=0.19
+scikit_learn>=0.18
+flask>=0.11
+pytest>=3.0
