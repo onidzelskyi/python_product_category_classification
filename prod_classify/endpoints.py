@@ -116,7 +116,8 @@ def load() -> str:
     file.save(os.path.join(os.path.join(app.root_path, app.config['UPLOAD_FOLDER']), filename))
 
     try:
-        response_data = model.load_model(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        response_data = model.load_model(
+            os.path.join(os.path.join(app.root_path, app.config['UPLOAD_FOLDER']), filename))
         response_op_status = 'success'
         response_http_status = 200
     except ValueError as err:

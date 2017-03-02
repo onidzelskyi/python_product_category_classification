@@ -72,7 +72,7 @@ class ProductClassifyModel:
         """Dump trained model to the pickle file.
         @:arg file_name - pickle file name with model to be dumped.
         @:return file_name - pickle file name with model to be download."""
-        assert file_name != None, ValueError('No file name given.')
+        assert file_name is not None, ValueError('No file name given.')
 
         with open(file_name, 'wb') as fp:
             pickle.dump(self.clf, fp)
