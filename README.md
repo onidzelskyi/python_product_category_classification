@@ -7,10 +7,18 @@ docs/
     Simple_Product_Category_Classification.ipynb    Ipython notebook with samples and tutorials
 
 prod_classify/
+    __init__.py                                     Package file
     core.py                                         Implementation of product category classification model
+    endpoints.py                                    Implementation of RESTful application endpoints.
 
 resources/
+    bad_csv_content.csv                             Data for tests
+    bad_json_content.json                           Data for tests
+    model.pickle                                    Data for tests
     Products.csv                                    Train dataset
+    test_set.csv                                    Data for tests
+    train_set.csv                                   Data for tests
+    train_set.json                                  Data for tests
 
 tests/
     test_prod_classify.py                           Tests of product category classification model
