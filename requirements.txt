@@ -3,4 +3,4 @@ scipy>=0.18
 scikit_learn>=0.18
 flask>=0.11
 pytest>=3.0
-flake8
+flake8>=3.3
