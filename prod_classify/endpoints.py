@@ -113,7 +113,7 @@ def load() -> str:
     # Save file on disk
     file = request.files['file']
     filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    file.save(os.path.join(os.path.join(app.root_path, app.config['UPLOAD_FOLDER']), filename))
 
     try:
         response_data = model.load_model(os.path.join(app.config['UPLOAD_FOLDER'], filename))
