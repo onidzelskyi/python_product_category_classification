@@ -2,7 +2,7 @@ Python Product Category Classification Model
 ============================================
 
 ## Project' structure ##
-
+```
 docs/
     Simple_Product_Category_Classification.ipynb    Ipython notebook with samples and tutorials
 
@@ -32,6 +32,7 @@ README.md               this file with short description of project
 requirements.txt        Requirements of libraries and packages
 
 setup.py                Setup file for package installation
+```
 
 ## Environment setup ##
 
