@@ -84,3 +84,46 @@ pytest tests
 ```bash
 python main.py
 ```
+
+## Train model from CSV file ##
+
+```bash
+curl -F file=@resources/train_set.csv localhost:5000/fit
+```
+
+## Train model from JSON data ##
+
+```bash
+curl -X POST -H "Content-Type: application/json" localhost:5000/fit -d @resources/train_set.json
+```
+
+## Predict product' category ##
+
+```bash
+curl -X POST -H "Content-Type: application/json" localhost:5000/predict -d '{"products": {"101": "best"}}'
+```
+
+## Get model statistics (accuracy) ##
+
+```bash
+curl -X POST localhost:5000/statistics -F file=@resources/test_set.csv
+```
+
+## Dump model to default file ##
+
+```bash
+curl -X GET localhost:5000/dump
+```
+
+
+## Dump model to given file ##
+
+```bash
+curl -X GET localhost:5000/dump?file=abc.txt
+```
+
+## Check PEP008 code style ##
+
+```bash
+flake8  --max-line-length=120 .
+```

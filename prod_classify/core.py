@@ -1,6 +1,21 @@
 """Core of product classification model."""
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn import metrics
+
+import pickle
+import logging
+
+
+# Logger
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename='app.log',
+                    filemode='w')
+logger = logging.getLogger(__name__)
+
+upload_folder = 'resources'
 
 
 class ProductClassifyModel:
@@ -14,17 +29,22 @@ class ProductClassifyModel:
         self.clf = MultinomialNB(alpha=.01)
         self.ready = False
 
-    def fit(self, train_data: list) -> None:
+    def fit(self, train_data: list) -> bool:
         """Train model.
-        @:arg train_data - list of tuples in (text, label) format."""
+        @:arg train_data - list of tuples in (text, label) format.
+        @:return bool flag operation status. True if success False else."""
         # Extract text data from train dataset
-        x = [x[0] for x in train_data]
+        x = train_data.text.values
 
         # Extract labels from train dataset
-        y = [x[1] for x in train_data]
+        y = train_data.label.values
 
         # Convert word2vec
-        x = self.vectorizer.fit_transform(x)
+        try:
+            x = self.vectorizer.fit_transform(x)
+        except ValueError as err:
+            logger.debug(err)
+            raise NotImplementedError('Bad CSV file format.')
 
         # Train model
         self.clf.fit(x, y)
@@ -39,7 +59,8 @@ class ProductClassifyModel:
         @:arg data - list of product items.
         @:return list of product items with theirs predicted categories."""
         # Check if model loaded, trained, and ready for use.
-        assert self.ready == True, NotImplementedError('Model not ready.')
+        if not self.ready:
+            raise NotImplementedError('Model not ready.')
 
         data_scores = self.vectorizer.transform(product_items.values())
         prob = self.clf.predict_proba(data_scores)
@@ -47,10 +68,45 @@ class ProductClassifyModel:
 
         return result
 
-    def dump_model(self):
-        """Dump trained model to the pickle file."""
-        raise NotImplementedError('Not implemented yet.')
+    def dump_model(self, file_name: str) -> str:
+        """Dump trained model to the pickle file.
+        @:arg file_name - pickle file name with model to be dumped.
+        @:return file_name - pickle file name with model to be download."""
+        assert file_name != None, ValueError('No file name given.')
 
-    def load_model(self):
-        """Load trained model from pickle file."""
-        raise NotImplementedError('Not implemented yet.')
+        with open(file_name, 'wb') as fp:
+            pickle.dump(self.clf, fp)
+            pickle.dump(self.vectorizer, fp)
+
+        return file_name
+
+    def load_model(self, file_name: str):
+        """Load trained model from pickle file.
+        @:arg file_name - name of pickle file to be upload."""
+        try:
+            with open(file_name, 'rb') as fp:
+                self.clf = pickle.load(fp)
+                self.vectorizer = pickle.load(fp)
+        except ValueError as err:
+            logger.debug(err)
+            raise ValueError('Model cannot be loaded from given file.')
+
+        return 'Successfully loaded model from file.'
+
+    def get_statistics(self, test_data: dict) -> str:
+        """Get statistics of trained model.
+        @:return string of statistics"""
+        if not self.ready:
+            raise NotImplementedError('Model not ready.')
+
+        x_test = self.vectorizer.transform(test_data.text.values)
+        y_test = test_data.label.values
+
+        pred = self.clf.predict(x_test)
+
+        accuracy = metrics.accuracy_score(y_test, pred)
+        f1_score = metrics.f1_score(y_test, pred, average='micro')
+        precision = metrics.precision_score(y_test, pred, average='micro')
+        recall = metrics.recall_score(y_test, pred, average='micro')
+
+        return dict(accuracy=accuracy, f1_score=f1_score, precision=precision, recall=recall)
